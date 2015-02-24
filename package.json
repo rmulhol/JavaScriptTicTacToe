@@ -1,0 +1,14 @@
+{
+  "name": "tic_tac_toe",
+  "version": "0.0.1",
+  "description": "playable tic tac toe game with ai player",
+  "main": "index.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Rob Mulholand",
+  "license": "MIT"
+}
