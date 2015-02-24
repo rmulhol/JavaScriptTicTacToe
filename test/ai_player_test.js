@@ -59,19 +59,4 @@ describe('AiPlayer', function() {
       assert.equal(new AiPlayer('X').getMove(rules), 1);
     })
   })
-
-  describe('getOpponent()', function() {
-    it('returns the opponent if an opponent move is on the board', function() {
-      var boardWithOpponent = new Board(3);
-      boardWithOpponent.placeMove(0, 'O');
-
-      assert.equal(new AiPlayer('X').getOpponent(boardWithOpponent.board), 'O');
-    })
-
-    it('returns `null` if no opponent move on the board', function() {
-      var boardWithoutOpponent = new Board(3);
-
-      assert.equal(new AiPlayer('X').getOpponent(boardWithoutOpponent.board), null);
-    })
-  })
 });

@@ -4,8 +4,8 @@ function AiPlayer(moveSignature) {
 
 AiPlayer.prototype = (function() {
   function getMove(rules) {
-    var opponent = this.getOpponent(rules.board.board);
-    if(opponent == null) {
+    var opponentMoveSignature = getOpponent(rules.board.board, this.moveSignature);
+    if(opponentMoveSignature == null) {
       return 0;
     }
 
@@ -18,7 +18,7 @@ AiPlayer.prototype = (function() {
     
     for(key in openSpaces) {
       rules.board.placeMove(openSpaces[key], this.moveSignature);
-      thisScore = this.minimax(rules, opponent, false, 1);
+      thisScore = minimax(rules, this.moveSignature, opponentMoveSignature, false, 1);
       if(thisScore > bestScore) {
         bestScore = thisScore;
         bestMove = openSpaces[key];
@@ -29,9 +29,10 @@ AiPlayer.prototype = (function() {
     return bestMove;
   }
 
-  function minimax(rules, opponent, myTurn, depth) {
-    if(rules.gameOver(this.moveSignature, opponent)) {
-      return scoreBoard(rules, opponent) / depth;
+  // private
+  function minimax(rules, myMoveSignature, opponentMoveSignature, myTurn, depth) {
+    if(rules.gameOver(myMoveSignature, opponentMoveSignature)) {
+      return scoreBoard(rules, myMoveSignature, opponentMoveSignature) / depth;
     }
     
     var openSpaces = rules.board.openSpaces();
@@ -41,8 +42,8 @@ AiPlayer.prototype = (function() {
       var bestScore = -100;
 
       for(var key in openSpaces) {
-        rules.board.placeMove(openSpaces[key], this.moveSignature);
-        thisScore = this.minimax(rules, opponent, false, depth + 1);
+        rules.board.placeMove(openSpaces[key], myMoveSignature);
+        thisScore = minimax(rules, myMoveSignature, opponentMoveSignature, false, depth + 1);
         if(thisScore > bestScore) {
           bestScore = thisScore;
         }
@@ -54,8 +55,8 @@ AiPlayer.prototype = (function() {
       var worstScore = 100;
 
       for(var key in openSpaces) {
-        rules.board.placeMove(openSpaces[key], opponent);
-        thisScore = this.minimax(rules, opponent, true, depth + 1);
+        rules.board.placeMove(openSpaces[key], opponentMoveSignature);
+        thisScore = minimax(rules, myMoveSignature, opponentMoveSignature, true, depth + 1);
         if(thisScore < worstScore) {
           worstScore = thisScore;
         }
@@ -66,19 +67,21 @@ AiPlayer.prototype = (function() {
     }
   }
 
-  function scoreBoard(rules, opponent) {
-    if(rules.playerWin(this.moveSignature)) {
+  // private
+  function scoreBoard(rules, myMoveSignature, opponentMoveSignature) {
+    if(rules.playerWin(myMoveSignature)) {
       return 10;
-    } else if(rules.playerWin(opponent)) {
+    } else if(rules.playerWin(opponentMoveSignature)) {
       return -10;
     } else {
       return 0;
     }
   }
 
-  function getOpponent(board) {
+  // private
+  function getOpponent(board, moveSignature) {
     for(var i=0, j=board.length; i<j; i++) {
-      if(board[i] != this.moveSignature && board[i] != undefined) {
+      if(board[i] != moveSignature && board[i] != undefined) {
         return board[i];
       }
     }
@@ -87,9 +90,6 @@ AiPlayer.prototype = (function() {
 
   return {
     getMove: getMove,
-    minimax: minimax,
-    scoreBoard: scoreBoard,
-    getOpponent: getOpponent
   }
 })();
 
